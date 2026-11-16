@@ -1,0 +1,5 @@
+dist
+tags
+.tmp
+*.test
+.claude

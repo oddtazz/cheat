@@ -1,0 +1,38 @@
+---
+name: CI
+
+on:
+  push:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: Install revive
+        run: go install github.com/mgechev/revive@latest
+      - name: Lint
+        run: revive -exclude vendor/... ./...
+      - name: Vet
+        run: go vet ./...
+      - name: Check formatting
+        run: test -z "$(gofmt -l . | grep -v vendor/)"
+
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: Build
+        run: go build -mod vendor ./cmd/cheat
+      - name: Test
+        run: go test ./...

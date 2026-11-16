@@ -1,0 +1,29 @@
+package sheet
+
+import (
+	"testing"
+)
+
+// TestParseWindowsLineEndings tests parsing with Windows line endings
+func TestParseWindowsLineEndings(t *testing.T) {
+	// stub our cheatsheet content with Windows line endings
+	markdown := "---\r\nsyntax: go\r\ntags: [ test ]\r\n---\r\nTo foo the bar: baz"
+
+	// parse the frontmatter
+	fm, text, err := parse(markdown)
+
+	// assert expectations
+	if err != nil {
+		t.Errorf("failed to parse markdown: %v", err)
+	}
+
+	want := "To foo the bar: baz"
+	if text != want {
+		t.Errorf("failed to parse text: want: %s, got: %s", want, text)
+	}
+
+	want = "go"
+	if fm.Syntax != want {
+		t.Errorf("failed to parse syntax: want: %s, got: %s", want, fm.Syntax)
+	}
+}
